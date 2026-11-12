@@ -4,9 +4,12 @@ Edge/Chrome extension (Manifest V3, no build step, no dependencies) that backs u
 
 > **Unofficial community tool.** It is not affiliated with or endorsed by Epicor. It uses the internal, undocumented web API of KBMax (the same calls the KBMax admin screens make), which can change without notice. Try everything on a DEV environment first; the import tool writes to KBMax.
 
+## Download
+No git or build step needed: download the latest `KBMax-Backup-v<version>.zip` from the [`releases`](https://github.com/AdvanceYourIT/KBMaxBackup/tree/main/releases) folder, unzip it and follow the installation below (`INSTALL.txt` in the zip has the same steps). Maintainers build a new package with `tools/build-release.sh` (needs git and zip) after raising `version` in `manifest.json`.
+
 ## Installation
 1. Open `edge://extensions/` (or `chrome://extensions/`), enable **Developer mode**, click **Load unpacked**.
-2. Select the folder of this repository (the one that contains `manifest.json`).
+2. Select the unzipped folder (or, when you cloned this repository, the repository folder): the one that contains `manifest.json`.
 
 ## Usage
 1. Log in to KBMax (dev, test or production) and keep that tab active.
