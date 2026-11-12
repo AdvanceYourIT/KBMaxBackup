@@ -118,3 +118,6 @@ Everything learned about KBMax's internal API (endpoints, write recipes, pitfall
 ## Open points
 - Uploads are tested against mocked APIs only, not yet against a real Azure DevOps organization or GitHub repository. Azure DevOps organizations on the legacy `*.visualstudio.com` URL are not supported.
 - Endpoints for quote headers, workflows, custom actions, quote outputs and safe functions, and the "get by id" paths, are taken from the existing KBMax Tools and not yet validated against a live environment; on 404/405 the search result is kept.
+
+## License
+MIT, see [LICENSE](LICENSE). Copyright (c) 2026 Robert van Oorschot.
