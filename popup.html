@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KBMax Backup</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    body { width: 380px; }
+    .actions { margin: 10px 14px 14px; display: flex; gap: 8px; align-items: center; }
+    .history div { display: flex; justify-content: space-between; padding: 2px 0; }
+    .field { display: grid; gap: 3px; margin-bottom: 8px; }
+    .field input, .field select { padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); font: inherit; background: #fff; color: var(--ink); }
+    .field input:focus, .field select:focus { outline: 2px solid var(--brand-light); border-color: var(--brand); }
+    .field .hint { font-size: 11px; color: var(--muted); }
+    .row { display: flex; gap: 8px; align-items: center; }
+    #saveStatus, .saveStatus { min-height: 18px; }
+    .target-select { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); font: inherit; background: #fff; color: var(--ink); }
+    #targetHint { font-size: 11px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <img src="icons/icon_32x32.png" alt="" />
+    <h1>KBMax Backup</h1>
+    <span id="envBadge" class="badge none">-</span>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" role="tab" data-tab="backup">Backup</button>
+    <button class="tab" role="tab" data-tab="azureDevOps">Azure DevOps</button>
+    <button class="tab" role="tab" data-tab="github">GitHub</button>
+    <button class="tab" role="tab" data-tab="environments">Hosts</button>
+  </div>
+
+  <div id="notice" class="notice" hidden></div>
+
+  <section id="tab-backup" class="tab-panel">
+    <div class="panel">
+      <h2>Environment to back up</h2>
+      <select id="targetSelect" class="target-select"></select>
+      <div class="hint muted" id="targetHint"></div>
+    </div>
+
+    <div class="panel" id="currentRecordPanel" hidden>
+      <h2>Record on screen</h2>
+      <div id="currentRecordText"></div>
+      <div class="hint muted" style="font-size:11px;margin:4px 0 8px">Backs up the saved version from KBMax; unsaved changes in the editor are not included.</div>
+      <button id="recordButton" disabled>Back up this record</button>
+    </div>
+
+    <div class="panel">
+      <h2>What should be in the backup?</h2>
+      <div id="categories"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Last backups</h2>
+      <div id="history" class="history"></div>
+    </div>
+
+    <div class="actions">
+      <button id="startButton" disabled>Create backup</button>
+      <button id="importButton" class="secondary" disabled title="Write JSON files back to KBMax">Import...</button>
+      <span id="hint" class="muted"></span>
+    </div>
+  </section>
+
+  <section id="tab-azureDevOps" class="tab-panel" hidden></section>
+  <section id="tab-github" class="tab-panel" hidden></section>
+
+  <section id="tab-environments" class="tab-panel" hidden>
+    <div class="notice">KBMax hosts are detected automatically: <code>&lt;customer&gt;.kbmax.com</code> is PROD, <code>&lt;customer&gt;-test.kbmax.com</code> is TEST and <code>&lt;customer&gt;-dev.kbmax.com</code> is DEV. Add a host below only if yours uses a different name.</div>
+    <div class="panel">
+      <h2>Custom hosts</h2>
+      <div id="overrideList"></div>
+      <label class="field"><span>Host name</span><input id="overrideHost" type="text" placeholder="cpq.example.com" autocomplete="off" spellcheck="false" /></label>
+      <label class="field"><span>Environment</span><select id="overrideEnv"></select></label>
+      <div class="row"><button id="overrideAdd">Add host</button><span id="overrideStatus" class="saveStatus muted"></span></div>
+    </div>
+    <div class="panel">
+      <h2>Diagnostics</h2>
+      <div class="muted" style="margin-bottom:8px">Reads where KBMax keeps the logged-in user and which calls this user may make. Read-only.</div>
+      <button id="diagnoseButton" class="secondary" disabled>Diagnose access...</button>
+    </div>
+  </section>
+
+  <script src="boot.js"></script>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

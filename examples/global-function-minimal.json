@@ -1,0 +1,6 @@
+{
+  "name": "Example.NewFunction",
+  "functionType": "value",
+  "blocks": "{\n    \"name\": \"globalRule\",\n    \"blocks\": [\n        {\n            \"$type\": \"DeclareGlobalFunctionBlock\",\n            \"x\": 25,\n            \"y\": 25,\n            \"parts\": {\n                \"name\": \"Example.NewFunction\",\n                \"desc\": \"\",\n                \"type\": \"value\",\n                \"func\": {\n                    \"name\": \"Example.NewFunction\",\n                    \"parameters\": [],\n                    \"$type\": \"FunctionDefinition\",\n                    \"returnType\": \"any\"\n                }\n            }\n        }\n    ]\n}",
+  "parameters": []
+}

@@ -1,0 +1,109 @@
+/* Default blue theme. All colours live in this block; change only these variables to
+   match your own branding. */
+:root {
+  --brand: #0a5ea8;
+  --brand-dark: #073f73;
+  --brand-light: #e6f0f9;
+  --accent: #f2a900;
+
+  --ink: #14202e;
+  --muted: #5d6b7a;
+  --bg: #f3f6f9;
+  --surface: #ffffff;
+  --border: #d3dde8;
+
+  --env-dev: #2e7d32;
+  --env-test: #e58a00;
+  --env-prod: #c62828;
+
+  --ok: #2e7d32;
+  --error: #b3261e;
+  --radius: 6px;
+  --font: 'Segoe UI', Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 13px;
+}
+
+.app-header {
+  background: var(--brand-dark);
+  color: #fff;
+  padding: 10px 14px;
+  border-bottom: 3px solid var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.app-header img { width: 24px; height: 24px; }
+.app-header h1 { margin: 0; font-size: 15px; font-weight: 600; flex: 1; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.badge.dev { background: var(--env-dev); }
+.badge.test { background: var(--env-test); }
+.badge.prod { background: var(--env-prod); }
+.badge.none { background: var(--muted); }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin: 10px 14px;
+}
+.panel h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand);
+}
+
+label.check { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; }
+
+button {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--brand);
+  background: var(--brand);
+  color: #fff;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { background: var(--brand-dark); }
+button:disabled { opacity: 0.5; cursor: default; }
+button.secondary { background: var(--surface); color: var(--brand); }
+button.secondary:hover:not(:disabled) { background: var(--brand-light); }
+
+.muted { color: var(--muted); }
+.error { color: var(--error); }
+.ok { color: var(--ok); }
+.notice { margin: 10px 14px; padding: 8px 10px; border-radius: var(--radius); background: var(--brand-light); color: var(--brand-dark); }
+.notice.prod { background: #fdecea; color: var(--env-prod); }
+
+.tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 8px; }
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  color: var(--muted);
+  padding: 9px 12px;
+}
+.tab:hover:not(:disabled) { background: var(--brand-light); color: var(--brand-dark); }
+.tab.active { color: var(--brand); border-bottom-color: var(--brand); font-weight: 600; }

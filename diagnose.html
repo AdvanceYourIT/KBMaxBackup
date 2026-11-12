@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KBMax Backup - access diagnostics</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .wrap { max-width: 900px; margin: 0 auto; padding-bottom: 24px; }
+    textarea { width: 100%; height: 420px; font-family: Consolas, monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); }
+    .row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app-header">
+      <img src="icons/icon_32x32.png" alt="" />
+      <h1>Access diagnostics</h1>
+      <span id="envBadge" class="badge none">-</span>
+    </div>
+    <div class="notice">This only reads. It looks in the KBMax tab for the place where the logged-in user is stored, lists the calls the page itself made while loading (names only), and tests which calls this user may make. For the best result, reload the KBMax page first and run the diagnostics straight after. Tokens and long values are never shown. The report can contain your own name and e-mail address: check it before you share it.</div>
+    <div class="panel">
+      <h2>Report</h2>
+      <textarea id="report" readonly>Running...</textarea>
+      <div class="row"><button id="copyButton" disabled>Copy report</button><button id="againButton" class="secondary">Run again</button><span id="status" class="muted"></span></div>
+    </div>
+  </div>
+  <script src="boot.js"></script>
+  <script type="module" src="diagnose.js"></script>
+</body>
+</html>

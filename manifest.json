@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "KBMax Backup",
+  "short_name": "KBMax Backup",
+  "description": "Backs up the configuration of Epicor CPQ (KBMax) per environment (dev, test, production) as a ZIP, optionally uploaded to Azure DevOps or GitHub.",
+  "version": "0.1.0",
+  "permissions": [
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.kbmax.com/*",
+    "https://dev.azure.com/*",
+    "https://api.github.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
+  ],
+  "action": {
+    "default_title": "KBMax Backup",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon_16x16.png",
+      "32": "icons/icon_32x32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon_16x16.png",
+    "32": "icons/icon_32x32.png",
+    "48": "icons/icon_48x48.png",
+    "128": "icons/icon_128x128.png"
+  }
+}
