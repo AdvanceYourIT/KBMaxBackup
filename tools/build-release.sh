@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds releases/KBMax-Backup-v<version>.zip from the committed files: unzip it, then load the folder
+# Builds releases/KBMax-Backup-v<version>.zip with only the files the extension needs, from the committed files: unzip it, then load the folder
 # in edge://extensions (Developer mode > Load unpacked). Needs git and zip. Run from anywhere in the repository.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -13,9 +13,10 @@ work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 mkdir -p "$work/$name" releases
 
-# Committed files only, without the release tooling itself.
-git archive HEAD | tar -x -C "$work/$name"
-rm -rf "$work/$name/releases" "$work/$name/tools"
+# Only what the extension needs to run (plus README and LICENSE), taken from the committed files:
+# no docs/, examples/, skills/, tools/ or earlier releases.
+files=$(git ls-files | grep -E '^[^/]+\.(html|js)$' || true)
+git archive HEAD manifest.json theme.css LICENSE README.md icons lib $files | tar -x -C "$work/$name"
 
 cat > "$work/$name/INSTALL.txt" <<TXT
 KBMax Backup v$version - installation
@@ -26,6 +27,7 @@ KBMax Backup v$version - installation
 4. Log in to KBMax and open the extension from the toolbar.
 
 README.md explains everything: backups, import, upload to Azure DevOps / GitHub and incremental sync.
+Setup guides, examples and notes on the KBMax API are in the repository: https://github.com/AdvanceYourIT/KBMaxBackup
 After an update: replace the folder and click "Reload" on the extension in edge://extensions.
 TXT
 
