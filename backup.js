@@ -66,7 +66,7 @@ async function recordLastBackup(summary) {
 
 // Starts a streaming upload session per enabled destination. A destination that fails is
 // switched off for the rest of the run; it never interrupts the ZIP.
-async function startUploads({ environment, folderName }) {
+async function startUploads({ environment, folderName, onSkipped }) {
   const destinations = await loadEnabledDestinations(environment.key);
   const uploads = [];
 
@@ -80,6 +80,7 @@ async function startUploads({ environment, folderName }) {
         syncFolder: `KBMax_${environment.short}`,
         signal: controller.signal,
         onLog: log,
+        onSkipped,
       });
       log(`${destination.label}: upload started.`);
     } catch (error) {
@@ -143,6 +144,7 @@ async function main() {
   const folderName = makeFolderName(environment, new Date(), params.get('record') ? `${record.category.folder}-${record.id}` : '');
   const filename = `${folderName}.zip`;
   let sink;
+  let tooLargeSink = null;
 
   try {
     sink = await createZipSink(filename);
@@ -151,7 +153,20 @@ async function main() {
       : 'Warning: streaming storage is not available; the ZIP is built in memory. Large backups may fail.', sink.kind !== 'disk');
 
     const zip = new ZipWriter(sink);
-    const uploads = await startUploads({ environment, folderName });
+    // Files that are too large for a push are kept in a second, small ZIP that is downloaded at the end.
+    const tooLargeName = `${folderName}_too-large-files.zip`;
+    const tooLargePaths = new Set();
+    let tooLargeZip = null;
+    const keepTooLarge = async (file) => {
+      if (tooLargePaths.has(file.path)) return;
+      tooLargePaths.add(file.path);
+      if (!tooLargeZip) {
+        tooLargeSink = await createZipSink(tooLargeName, { cleanup: false });
+        tooLargeZip = new ZipWriter(tooLargeSink);
+      }
+      await tooLargeZip.add(file.path, file.data);
+    };
+    const uploads = await startUploads({ environment, folderName, onSkipped: keepTooLarge });
     let fileCount = 0;
 
     const onFileWrite = async (file) => {
@@ -196,6 +211,12 @@ async function main() {
     const failedUploads = uploads.filter((upload) => upload.error);
     const downloaded = uploads.length === 0 || failedUploads.length > 0;
     if (downloaded) deliver();
+    if (tooLargeZip) {
+      await tooLargeZip.finish();
+      // A full ZIP that was downloaded already contains these files.
+      if (!downloaded) deliverLocal({ blob: await tooLargeSink.getBlob(), filename: tooLargeName });
+      log(`${tooLargePaths.size} file(s) too large for ${uploads.map((upload) => upload.label).join(' / ')} ${downloaded ? 'are in the downloaded ZIP' : `were downloaded as ${tooLargeName}`}.`, true);
+    }
     downloadButton.hidden = false;
     downloadButton.addEventListener('click', deliver);
     cancelButton.hidden = true;
@@ -208,6 +229,7 @@ async function main() {
     const parts = [];
     if (downloaded) parts.push(summary.errorCount > 0 ? `${filename} downloaded with ${summary.errorCount} error(s) (see _errors.json in the ZIP).` : `${filename} downloaded.`);
     else if (summary.errorCount > 0) parts.push(`${summary.errorCount} record(s) could not be read (see _errors.json in the backup).`);
+    if (tooLargeZip && !downloaded) parts.push(`${tooLargePaths.size} file(s) were too large to upload and were downloaded as ${tooLargeName}.`);
     uploads.forEach((upload) => parts.push(upload.error ? `Upload to ${upload.label} failed: ${upload.error}` : `Uploaded to ${upload.label}.`));
     stepTitle.textContent = failedUploads.length > 0 ? 'Backup complete, upload failed' : 'Backup complete';
     statusEl.textContent = parts.join(' ');
@@ -215,6 +237,7 @@ async function main() {
     log(`Done: ${fileCount} files, ${(blob.size / 1024 / 1024).toFixed(1)} MB${downloaded ? `, downloaded as ${filename}` : ' (local ZIP not downloaded; use "Download ZIP" if you want it)'}`);
   } catch (error) {
     await sink?.abort();
+    await tooLargeSink?.abort();
     const cancelled = error.name === 'AbortError';
     stepTitle.textContent = cancelled ? 'Backup cancelled' : 'Backup failed';
     statusEl.textContent = cancelled ? 'Nothing was downloaded.' : error.message;
